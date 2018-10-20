@@ -25,5 +25,5 @@ func (candidate PositiveSemidefiniteCandidate) IsPositiveSemidefinite() (isPosit
 			isPositiveSemidefinite = false
 		}
 	}
-	return isPositiveSemidefinite
+	return
 }
