@@ -4,6 +4,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 	"math/rand"
 	"fmt"
+	"github.com/acra5y/n-dilation-computer/positiveSemidefiniteTester"
 )
 
 func printDivider() {
@@ -15,6 +16,11 @@ func printM(a mat.Matrix) {
 
 	fmt.Printf("\na = %v\n\n", fa)
 	printDivider()
+}
+
+func psdMatrix() mat.Matrix {
+	data := []float64{1,2,2,100}
+	return mat.NewDense(2, 2, data)
 }
 
 func main() {
@@ -46,4 +52,15 @@ func main() {
 	for _, v := range eigen.Values(nil) {
 		fmt.Printf("%g\n", v)
 	}
+
+	printDivider()
+
+	candidate := positiveSemidefiniteTester.PositiveSemidefiniteCandidate{Value: a}
+	fmt.Printf("%v %v\n", "is psd: ", candidate.IsPositiveSemidefinite())
+
+	printDivider()
+
+	candidate = positiveSemidefiniteTester.PositiveSemidefiniteCandidate{Value: psdMatrix()}
+	printM(candidate.Value)
+	fmt.Printf("%v %v\n", "is psd: ", candidate.IsPositiveSemidefinite())
 }
