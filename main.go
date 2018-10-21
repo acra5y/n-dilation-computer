@@ -18,9 +18,22 @@ func printM(a mat.Matrix) {
 	printDivider()
 }
 
+type PsdResult struct {
+    isPsd bool
+    matrix mat.Matrix
+}
+
 func psdMatrix() mat.Matrix {
 	data := []float64{1,2,2,100}
 	return mat.NewDense(2, 2, data)
+}
+
+func isPsd(a mat.Matrix, c chan PsdResult) {
+	eigen := mat.Eigen{}
+	candidate := positiveSemidefiniteTester.PositiveSemidefiniteCandidate{Value: a}
+	result, _ := candidate.IsPositiveSemidefinite(&eigen)
+
+	c <- PsdResult{isPsd: result, matrix: candidate.Value}
 }
 
 func main() {
@@ -54,13 +67,16 @@ func main() {
 	}
 
 	printDivider()
+	c := make(chan PsdResult, 2)
+	go isPsd(a, c)
+	go isPsd(psdMatrix(), c)
 
-	candidate := positiveSemidefiniteTester.PositiveSemidefiniteCandidate{Value: a}
-	fmt.Printf("%v %v\n", "is psd: ", candidate.IsPositiveSemidefinite(&eigen))
-
+	var x, y PsdResult
+	x = <- c
+	y = <- c
+	fmt.Printf("a=%v %v %v\n", x.matrix, "is psd: ", x.isPsd)
 	printDivider()
-
-	candidate = positiveSemidefiniteTester.PositiveSemidefiniteCandidate{Value: psdMatrix()}
-	printM(candidate.Value)
-	fmt.Printf("%v %v\n", "is psd: ", candidate.IsPositiveSemidefinite(&eigen))
+	fmt.Printf("a=%v %v %v\n", y.matrix, "is psd: ", y.isPsd)
+	printDivider()
+	fmt.Println("done")
 }
