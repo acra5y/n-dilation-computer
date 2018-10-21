@@ -56,11 +56,11 @@ func main() {
 	printDivider()
 
 	candidate := positiveSemidefiniteTester.PositiveSemidefiniteCandidate{Value: a}
-	fmt.Printf("%v %v\n", "is psd: ", candidate.IsPositiveSemidefinite())
+	fmt.Printf("%v %v\n", "is psd: ", candidate.IsPositiveSemidefinite(&eigen))
 
 	printDivider()
 
 	candidate = positiveSemidefiniteTester.PositiveSemidefiniteCandidate{Value: psdMatrix()}
 	printM(candidate.Value)
-	fmt.Printf("%v %v\n", "is psd: ", candidate.IsPositiveSemidefinite())
+	fmt.Printf("%v %v\n", "is psd: ", candidate.IsPositiveSemidefinite(&eigen))
 }
