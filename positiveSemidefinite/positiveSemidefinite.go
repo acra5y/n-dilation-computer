@@ -1,4 +1,4 @@
-package positiveSemidefiniteTester
+package positiveSemidefinite
 
 import (
 	"fmt"

@@ -4,7 +4,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 	"math/rand"
 	"fmt"
-	"github.com/acra5y/n-dilation-computer/positiveSemidefiniteTester"
+	"github.com/acra5y/n-dilation-computer/positiveSemidefinite"
 )
 
 func printDivider() {
@@ -30,7 +30,7 @@ func psdMatrix() mat.Matrix {
 
 func isPsd(a mat.Matrix, c chan PsdResult) {
 	eigen := mat.Eigen{}
-	candidate := positiveSemidefiniteTester.PositiveSemidefiniteCandidate{Value: a}
+	candidate := positiveSemidefinite.PositiveSemidefiniteCandidate{Value: a}
 	result, _ := candidate.IsPositiveSemidefinite(&eigen)
 
 	c <- PsdResult{isPsd: result, matrix: candidate.Value}
