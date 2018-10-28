@@ -1,21 +1,21 @@
 package main
 
 import (
-	"gonum.org/v1/gonum/mat"
-	"math/rand"
-	"fmt"
-	"github.com/acra5y/n-dilation-computer/positiveSemidefinite"
+    "gonum.org/v1/gonum/mat"
+    "math/rand"
+    "fmt"
+    "github.com/acra5y/n-dilation-computer/positiveSemidefinite"
 )
 
 func printDivider() {
-	fmt.Printf("%s\n", "--------------------------------")
+    fmt.Printf("%s\n", "--------------------------------")
 }
 
 func printM(a mat.Matrix) {
-	fa := mat.Formatted(a, mat.Prefix("    "), mat.Squeeze())
+    fa := mat.Formatted(a, mat.Prefix("    "), mat.Squeeze())
 
-	fmt.Printf("\na = %v\n\n", fa)
-	printDivider()
+    fmt.Printf("\na = %v\n\n", fa)
+    printDivider()
 }
 
 type PsdResult struct {
@@ -24,59 +24,59 @@ type PsdResult struct {
 }
 
 func psdMatrix() mat.Matrix {
-	data := []float64{1,2,2,100}
-	return mat.NewDense(2, 2, data)
+    data := []float64{1,2,2,100}
+    return mat.NewDense(2, 2, data)
 }
 
 func isPsd(a mat.Matrix, c chan PsdResult) {
-	eigen := mat.Eigen{}
-	candidate := positiveSemidefinite.PositiveSemidefiniteCandidate{Value: a}
-	result, _ := candidate.IsPositiveSemidefinite(&eigen)
+    eigen := mat.Eigen{}
+    candidate := positiveSemidefinite.PositiveSemidefiniteCandidate{Value: a}
+    result, _ := candidate.IsPositiveSemidefinite(&eigen)
 
-	c <- PsdResult{isPsd: result, matrix: candidate.Value}
+    c <- PsdResult{isPsd: result, matrix: candidate.Value}
 }
 
 func main() {
-	dimension := 6
-	data := make([]float64, 36)
-	for i := range data {
-		data[i] = rand.NormFloat64()
-	}
-	a := mat.NewDense(dimension, dimension, data)
+    dimension := 6
+    data := make([]float64, 36)
+    for i := range data {
+        data[i] = rand.NormFloat64()
+    }
+    a := mat.NewDense(dimension, dimension, data)
 
-	tr := mat.Trace(a)
+    tr := mat.Trace(a)
 
-	fmt.Printf("%g\n", tr)
-	printDivider()
-	printM(a)
-	printDivider()
+    fmt.Printf("%g\n", tr)
+    printDivider()
+    printM(a)
+    printDivider()
 
-	values := mat.Eigen{}
-	values.Factorize(a, false, true)
+    values := mat.Eigen{}
+    values.Factorize(a, false, true)
 
-	printDivider()
-	for _, v := range values.Values(nil) {
-		fmt.Printf("%g\n", v)
-	}
+    printDivider()
+    for _, v := range values.Values(nil) {
+        fmt.Printf("%g\n", v)
+    }
 
-	var eigen mat.Eigen
-	eigen.Factorize(a, false, false)
+    var eigen mat.Eigen
+    eigen.Factorize(a, false, false)
 
-	for _, v := range eigen.Values(nil) {
-		fmt.Printf("%g\n", v)
-	}
+    for _, v := range eigen.Values(nil) {
+        fmt.Printf("%g\n", v)
+    }
 
-	printDivider()
-	c := make(chan PsdResult, 2)
-	go isPsd(a, c)
-	go isPsd(psdMatrix(), c)
+    printDivider()
+    c := make(chan PsdResult, 2)
+    go isPsd(a, c)
+    go isPsd(psdMatrix(), c)
 
-	var x, y PsdResult
-	x = <- c
-	y = <- c
-	fmt.Printf("a=%v %v %v\n", x.matrix, "is psd: ", x.isPsd)
-	printDivider()
-	fmt.Printf("a=%v %v %v\n", y.matrix, "is psd: ", y.isPsd)
-	printDivider()
-	fmt.Println("done")
+    var x, y PsdResult
+    x = <- c
+    y = <- c
+    fmt.Printf("a=%v %v %v\n", x.matrix, "is psd: ", x.isPsd)
+    printDivider()
+    fmt.Printf("a=%v %v %v\n", y.matrix, "is psd: ", y.isPsd)
+    printDivider()
+    fmt.Println("done")
 }
