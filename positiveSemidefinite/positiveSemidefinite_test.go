@@ -38,6 +38,7 @@ func TestPsdForMatrix(t *testing.T) {
 		{values: []complex128{0,-5}, isPsd: false, factorizeOk: true, value: dummyMatrix},
 		{values: []complex128{0,complex(5, 7)}, isPsd: false, factorizeOk: true, value: dummyMatrix},
 		{values: []complex128{}, isPsd: false, factorizeOk: true, value: mat.NewDense(2, 2, []float64{0,1,0,0})},
+		{values: []complex128{}, isPsd: false, factorizeOk: true, value: mat.NewDense(2, 3, nil)},
 	}
 
 	for _, table := range tables {
