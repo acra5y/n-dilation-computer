@@ -29,27 +29,32 @@ var dummyMatrix = mat.NewDense(2, 2, nil)
 
 func TestPsdForMatrix(t *testing.T) {
     tables := []struct {
+    	desc string
     	value mat.Matrix
 		values []complex128
 		isPsd bool
 		factorizeOk bool
 	}{
-		{values: []complex128{0,5}, isPsd: true, factorizeOk: true, value: dummyMatrix},
-		{values: []complex128{0,-5}, isPsd: false, factorizeOk: true, value: dummyMatrix},
-		{values: []complex128{0,complex(5, 7)}, isPsd: false, factorizeOk: true, value: dummyMatrix},
-		{values: []complex128{}, isPsd: false, factorizeOk: true, value: mat.NewDense(2, 2, []float64{0,1,0,0})},
-		{values: []complex128{}, isPsd: false, factorizeOk: true, value: mat.NewDense(2, 3, nil)},
+		{values: []complex128{0,5}, isPsd: true, factorizeOk: true, value: dummyMatrix, desc: "returns true"},
+		{values: []complex128{0,-5}, isPsd: false, factorizeOk: true, value: dummyMatrix, desc: "returns false"},
+		{values: []complex128{0,complex(5, 7)}, isPsd: false, factorizeOk: true, value: dummyMatrix, desc: "checks for factorize error"},
+		{values: []complex128{}, isPsd: false, factorizeOk: true, value: mat.NewDense(2, 2, []float64{0,1,0,0}), desc: "checks is symmetric"},
+		{values: []complex128{}, isPsd: false, factorizeOk: true, value: mat.NewDense(2, 3, nil), desc: "checks is square matrix"},
 	}
 
 	for _, table := range tables {
-	candidate := PositiveSemidefiniteCandidate{ Value: table.value }
-    isPsd, err := candidate.IsPositiveSemidefinite(createEigenMock(table.factorizeOk, table.values))
-        if err != nil {
-			t.Errorf("IsPositiveSemidefinite returned unexpected error: %v", err)
-		}
-		if isPsd != table.isPsd {
-			t.Errorf("IsPositiveSemidefinite was incorrect, got: %t, want: %t.", isPsd, table.isPsd)
-		}
+
+		t.Run(table.desc, func(t *testing.T) {
+			t.Parallel()
+			candidate := PositiveSemidefiniteCandidate{ Value: table.value }
+		    isPsd, err := candidate.IsPositiveSemidefinite(createEigenMock(table.factorizeOk, table.values))
+	        if err != nil {
+				t.Errorf("IsPositiveSemidefinite returned unexpected error: %v", err)
+			}
+			if isPsd != table.isPsd {
+				t.Errorf("IsPositiveSemidefinite was incorrect, got: %t, want: %t.", isPsd, table.isPsd)
+			}
+		})
 	}
 }
 
