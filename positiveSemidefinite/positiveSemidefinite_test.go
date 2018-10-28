@@ -1,4 +1,4 @@
-package positiveSemidefiniteTester
+package positiveSemidefinite
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func createEigenMock(factorizeOk bool, values []complex128) EigenMock {
 	return eigen
 }
 
-var dummyMatrix = mat.NewDense(2, 2, []float64{0,0,0,0})
+var dummyMatrix = mat.NewDense(2, 2, nil)
 
 func TestPsdForMatrix(t *testing.T) {
     tables := []struct {
