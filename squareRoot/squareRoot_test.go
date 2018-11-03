@@ -10,9 +10,9 @@ var dummyMatrix = mat.NewDense(2, 2, nil)
 func TestCalculate(t *testing.T) {
     tables := []struct {
         desc string
-        value mat.Matrix
+        value *mat.Dense
     }{
-        {value: dummyMatrix, desc: "template"},
+        {value: eye(2), desc: "square root"},
     }
 
     for _, table := range tables {
@@ -20,12 +20,16 @@ func TestCalculate(t *testing.T) {
         t.Run(table.desc, func(t *testing.T) {
             t.Parallel()
             squareRoot := SquareRoot{
-                Value: table.value,
+                C: table.value,
             }
-            _, err := squareRoot.Calculate()
+            res, err := squareRoot.Calculate()
 
-            if err == nil {
-                t.Errorf("No error thrown.")
+            if err != nil {
+                t.Errorf("Error: %v.", err)
+            }
+
+            if !mat.Equal(res, table.value) {
+                t.Errorf("Wrong result, got: %v, want: %v", res, table.value)
             }
         })
     }
