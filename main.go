@@ -23,12 +23,15 @@ type PsdResult struct {
     matrix mat.Matrix
 }
 
-func psdMatrix() mat.Matrix {
+func psdMatrix() *mat.Dense {
     data := []float64{1,2,2,100}
     return mat.NewDense(2, 2, data)
 }
 
-func isPsd(a mat.Matrix, c chan PsdResult) {
+func isPsd(a *mat.Dense, c chan PsdResult) {
+    m, n := a.Dims()
+    v := mat.NewDense(m, n, nil)
+    v.Clone(a)
     eigen := mat.Eigen{}
     candidate := positiveSemidefinite.PositiveSemidefiniteCandidate{Value: a}
     result, _ := candidate.IsPositiveSemidefinite(&eigen)
