@@ -5,6 +5,7 @@ import (
     "math/rand"
     "fmt"
     "github.com/acra5y/n-dilation-computer/positiveSemidefinite"
+    "github.com/acra5y/n-dilation-computer/squareRoot"
 )
 
 func printDivider() {
@@ -81,5 +82,32 @@ func main() {
     printDivider()
     fmt.Printf("a=%v %v %v\n", y.matrix, "is psd: ", y.isPsd)
     printDivider()
+
+    if x.isPsd {
+        m, n := x.matrix.Dims()
+        v := mat.NewDense(m, n, nil)
+        v.Clone(x.matrix)
+
+        sqr := squareRoot.SquareRoot{ C: v }
+        res, _ := sqr.Calculate()
+        prod := mat.NewDense(m, n, nil)
+        prod.Product(res, res)
+        fmt.Printf("M=%v sq=%v sq^2=%v\n", v, res, prod)
+        printDivider()
+    }
+
+    if y.isPsd {
+        m, n := y.matrix.Dims()
+        v := mat.NewDense(m, n, nil)
+        v.Clone(y.matrix)
+
+        sqr := squareRoot.SquareRoot{ C: v }
+        res, _ := sqr.Calculate()
+        prod := mat.NewDense(m, n, nil)
+        prod.Product(res, res)
+        fmt.Printf("M=%v sq=%v sq^2=%v\n", v, res, prod)
+        printDivider()
+    }
+
     fmt.Println("done")
 }
