@@ -30,7 +30,7 @@ var dummyMatrix = mat.NewDense(2, 2, nil)
 func TestPsdForMatrix(t *testing.T) {
     tables := []struct {
         desc string
-        value mat.Matrix
+        value *mat.Dense
         values []complex128
         isPsd bool
         factorizeOk bool

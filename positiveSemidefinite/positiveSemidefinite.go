@@ -7,7 +7,7 @@ import (
 )
 
 type PositiveSemidefiniteCandidate struct {
-    Value mat.Matrix
+    Value *mat.Dense
 }
 
 type EigenComputer interface {
@@ -20,13 +20,16 @@ func isSymmetric(a mat.Matrix) bool {
 }
 
 func (candidate PositiveSemidefiniteCandidate) IsPositiveSemidefinite(eigen EigenComputer) (isPositiveSemidefinite bool, err error) {
+    m, n := candidate.Value.Dims()
+    c := mat.NewDense(m, n, nil)
+    c.Clone(candidate.Value)
     err = nil
     isPositiveSemidefinite = true
     if !isSymmetric(candidate.Value) {
         isPositiveSemidefinite = false
         return
     }
-    ok := eigen.Factorize(candidate.Value, false, false)
+    ok := eigen.Factorize(c, false, false)
 
     if ok {
         for _, val := range eigen.Values(nil) {
