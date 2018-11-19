@@ -44,13 +44,12 @@ func (squareRoot *SquareRoot) nextGuess(prePredecessor *mat.Dense, predecessor *
 func (squareRoot *SquareRoot) Calculate() (sq *mat.Dense, err error) {
     err = nil
     n, _ := squareRoot.C.Dims()
-    var m1, m2, m3, eyeN, inverse, p *mat.Dense
+    var m1, m2, m3, eyeN, q, r, rInv, inverse, p *mat.Dense
     eyeN = eye(n)
     sq = mat.NewDense(n, n, nil)
     m1 = mat.NewDense(n, n, nil)
     m2 = mat.NewDense(n, n, nil)
     m3 = mat.NewDense(n, n, nil)
-    inverse = mat.NewDense(n, n, nil)
     p = mat.NewDense(n, n, nil)
     m1.Clone(eyeN)
     m2.Clone(squareRoot.C)
@@ -63,7 +62,17 @@ func (squareRoot *SquareRoot) Calculate() (sq *mat.Dense, err error) {
         m2.Clone(m3)
     }
 
-    inverse.Inverse(m1)
+    r = mat.NewDense(n, n, nil)
+    q = mat.NewDense(n, n, nil)
+    rInv = mat.NewDense(n, n, nil)
+    inverse = mat.NewDense(n, n, nil)
+    qr := mat.QR{}
+    qr.Factorize(m1)
+    qr.QTo(q)
+    qr.RTo(r)
+    rInv.Inverse(r)
+
+    inverse.Product(rInv, q.T())
     p.Product(m2, inverse)
     sq.Sub(p, eyeN)
 
