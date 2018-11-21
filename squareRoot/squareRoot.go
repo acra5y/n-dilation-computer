@@ -29,6 +29,25 @@ func eye(n int) *mat.Dense {
     return m
 }
 
+func inverseViaQR(m *mat.Dense) (inverse *mat.Dense) {
+    n, _ := m.Dims()
+    var q, r, rInv *mat.Dense
+    r = mat.NewDense(n, n, nil)
+    q = mat.NewDense(n, n, nil)
+    rInv = mat.NewDense(n, n, nil)
+
+    inverse = mat.NewDense(n, n, nil)
+
+    qr := mat.QR{}
+    qr.Factorize(m)
+    qr.QTo(q)
+    qr.RTo(r)
+    rInv.Inverse(r)
+
+    inverse.Product(rInv, q.T())
+    return
+}
+
 func (squareRoot *SquareRoot) nextGuess(prePredecessor *mat.Dense, predecessor *mat.Dense) (guess *mat.Dense) {
     n, _ := squareRoot.C.Dims()
     var doubled, p *mat.Dense
@@ -44,7 +63,7 @@ func (squareRoot *SquareRoot) nextGuess(prePredecessor *mat.Dense, predecessor *
 func (squareRoot *SquareRoot) Calculate() (sq *mat.Dense, err error) {
     err = nil
     n, _ := squareRoot.C.Dims()
-    var m1, m2, m3, eyeN, q, r, rInv, inverse, p *mat.Dense
+    var m1, m2, m3, eyeN, inverse, p *mat.Dense
     eyeN = eye(n)
     sq = mat.NewDense(n, n, nil)
     m1 = mat.NewDense(n, n, nil)
@@ -62,17 +81,7 @@ func (squareRoot *SquareRoot) Calculate() (sq *mat.Dense, err error) {
         m2.Clone(m3)
     }
 
-    r = mat.NewDense(n, n, nil)
-    q = mat.NewDense(n, n, nil)
-    rInv = mat.NewDense(n, n, nil)
-    inverse = mat.NewDense(n, n, nil)
-    qr := mat.QR{}
-    qr.Factorize(m1)
-    qr.QTo(q)
-    qr.RTo(r)
-    rInv.Inverse(r)
-
-    inverse.Product(rInv, q.T())
+    inverse = inverseViaQR(m1)
     p.Product(m2, inverse)
     sq.Sub(p, eyeN)
 
