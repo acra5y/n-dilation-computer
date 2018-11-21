@@ -9,7 +9,7 @@ type SquareRoot struct {
     z *mat.Dense
 }
 
-// https://scholarworks.rit.edu/cgi/viewcontent.cgi?referer=https://www.google.de/&httpsredir=1&article=10419&context=theses
+// https://scholarworks.rit.edu/cgi/viewcontent.cgi?article=10419&context=theses
 
 /*
     1. Declare some nonsingular matrix C with dimensions (n, n).
