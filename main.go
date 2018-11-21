@@ -48,29 +48,12 @@ func main() {
     }
     a := mat.NewDense(dimension, dimension, data)
 
-    tr := mat.Trace(a)
-
-    fmt.Printf("%g\n", tr)
     printDivider()
     printM(a)
-    printDivider()
 
     values := mat.Eigen{}
     values.Factorize(a, false, true)
 
-    printDivider()
-    for _, v := range values.Values(nil) {
-        fmt.Printf("%g\n", v)
-    }
-
-    var eigen mat.Eigen
-    eigen.Factorize(a, false, false)
-
-    for _, v := range eigen.Values(nil) {
-        fmt.Printf("%g\n", v)
-    }
-
-    printDivider()
     c := make(chan PsdResult, 2)
     go isPsd(a, c)
     go isPsd(psdMatrix(), c)
