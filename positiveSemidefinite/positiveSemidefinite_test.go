@@ -35,7 +35,7 @@ func TestPsdForMatrix(t *testing.T) {
         isPsd bool
         factorizeOk bool
     }{
-        {values: []complex128{0+0i,5+0i}, isPsd: true, factorizeOk: true, value: dummyMatrix, desc: "returns true"},
+        {values: []complex128{1+0i,5+0i}, isPsd: true, factorizeOk: true, value: dummyMatrix, desc: "returns true"},
         {values: []complex128{1+0i,0-5i}, isPsd: false, factorizeOk: true, value: dummyMatrix, desc: "returns false"},
         {values: []complex128{0+0i,5+7i}, isPsd: false, factorizeOk: true, value: dummyMatrix, desc: "checks for factorize error"},
         {values: []complex128{}, isPsd: false, factorizeOk: true, value: mat.NewDense(2, 2, []float64{0,1,0,0}), desc: "checks is symmetric"},
