@@ -1,4 +1,4 @@
-package positiveSemidefinite
+package positiveDefinite
 
 import (
     "fmt"
@@ -6,7 +6,7 @@ import (
     "math/cmplx"
 )
 
-type PositiveSemidefiniteCandidate struct {
+type PositiveDefiniteCandidate struct {
     Value *mat.Dense
 }
 
@@ -19,14 +19,14 @@ func isSymmetric(a mat.Matrix) bool {
     return mat.Equal(a, a.T())
 }
 
-func (candidate PositiveSemidefiniteCandidate) IsPositiveSemidefinite(eigen EigenComputer) (isPositiveSemidefinite bool, err error) {
+func (candidate PositiveDefiniteCandidate) IsPositiveDefinite(eigen EigenComputer) (isPositiveDefinite bool, err error) {
     m, n := candidate.Value.Dims()
     c := mat.NewDense(m, n, nil)
     c.Clone(candidate.Value)
     err = nil
-    isPositiveSemidefinite = true
+    isPositiveDefinite = true
     if !isSymmetric(candidate.Value) {
-        isPositiveSemidefinite = false
+        isPositiveDefinite = false
         return
     }
     ok := eigen.Factorize(c, false, false)
@@ -35,7 +35,7 @@ func (candidate PositiveSemidefiniteCandidate) IsPositiveSemidefinite(eigen Eige
         for _, val := range eigen.Values(nil) {
             r, theta := cmplx.Polar(val)
             if theta != 0 || r == 0 {
-                isPositiveSemidefinite = false
+                isPositiveDefinite = false
                 return
             }
         }

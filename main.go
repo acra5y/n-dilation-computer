@@ -4,7 +4,7 @@ import (
     "gonum.org/v1/gonum/mat"
     "math/rand"
     "fmt"
-    "github.com/acra5y/n-dilation-computer/positiveSemidefinite"
+    "github.com/acra5y/n-dilation-computer/positiveDefinite"
     "github.com/acra5y/n-dilation-computer/squareRoot"
 )
 
@@ -19,25 +19,25 @@ func printM(a mat.Matrix) {
     printDivider()
 }
 
-type PsdResult struct {
-    isPsd bool
+type PositiveDefiniteResult struct {
+    isPositiveDefinite bool
     matrix mat.Matrix
 }
 
-func psdMatrix() *mat.Dense {
+func positivedefiniteMatrix() *mat.Dense {
     data := []float64{1,2,2,100}
     return mat.NewDense(2, 2, data)
 }
 
-func isPsd(a *mat.Dense, c chan PsdResult) {
+func isPositiveDefinite(a *mat.Dense, c chan PositiveDefiniteResult) {
     m, n := a.Dims()
     v := mat.NewDense(m, n, nil)
     v.Clone(a)
     eigen := mat.Eigen{}
-    candidate := positiveSemidefinite.PositiveSemidefiniteCandidate{Value: a}
-    result, _ := candidate.IsPositiveSemidefinite(&eigen)
+    candidate := positiveDefinite.PositiveDefiniteCandidate{Value: a}
+    result, _ := candidate.IsPositiveDefinite(&eigen)
 
-    c <- PsdResult{isPsd: result, matrix: candidate.Value}
+    c <- PositiveDefiniteResult{isPositiveDefinite: result, matrix: candidate.Value}
 }
 
 func main() {
@@ -54,19 +54,19 @@ func main() {
     values := mat.Eigen{}
     values.Factorize(a, false, true)
 
-    c := make(chan PsdResult, 2)
-    go isPsd(a, c)
-    go isPsd(psdMatrix(), c)
+    c := make(chan PositiveDefiniteResult, 2)
+    go isPositiveDefinite(a, c)
+    go isPositiveDefinite(positivedefiniteMatrix(), c)
 
-    var x, y PsdResult
+    var x, y PositiveDefiniteResult
     x = <- c
     y = <- c
-    fmt.Printf("a=%v %v %v\n", x.matrix, "is psd: ", x.isPsd)
+    fmt.Printf("a=%v %v %v\n", x.matrix, "is positivedefinite: ", x.isPositiveDefinite)
     printDivider()
-    fmt.Printf("a=%v %v %v\n", y.matrix, "is psd: ", y.isPsd)
+    fmt.Printf("a=%v %v %v\n", y.matrix, "is positivedefinite: ", y.isPositiveDefinite)
     printDivider()
 
-    if x.isPsd {
+    if x.isPositiveDefinite {
         m, n := x.matrix.Dims()
         v := mat.NewDense(m, n, nil)
         v.Clone(x.matrix)
@@ -79,7 +79,7 @@ func main() {
         printDivider()
     }
 
-    if y.isPsd {
+    if y.isPositiveDefinite {
         m, n := y.matrix.Dims()
         v := mat.NewDense(m, n, nil)
         v.Clone(y.matrix)
