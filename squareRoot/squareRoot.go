@@ -2,6 +2,7 @@ package squareRoot
 
 import (
     "gonum.org/v1/gonum/mat"
+    "math"
 )
 
 type SquareRoot struct {
@@ -60,6 +61,16 @@ func (squareRoot *SquareRoot) nextGuess(prePredecessor *mat.Dense, predecessor *
     return
 }
 
+func isIllConditioned(m* mat.Dense, iteration int) bool {
+    n, _ := m.Dims()
+    negative := mat.NewDense(n, n, nil)
+    negative.Scale(-1, m)
+    max := math.Max(mat.Max(m), mat.Max(negative))
+    det := mat.Det(m)
+
+    return math.Pow(max, float64(n)) / det > 1e15
+}
+
 func (squareRoot *SquareRoot) Calculate() (sq *mat.Dense, err error) {
     err = nil
     n, _ := squareRoot.C.Dims()
@@ -79,6 +90,10 @@ func (squareRoot *SquareRoot) Calculate() (sq *mat.Dense, err error) {
         m3 = squareRoot.nextGuess(m1, m2)
         m1.Clone(m2)
         m2.Clone(m3)
+
+        if (isIllConditioned(m3, i)) {
+            break;
+        }
     }
 
     inverse = inverseViaQR(m1)
