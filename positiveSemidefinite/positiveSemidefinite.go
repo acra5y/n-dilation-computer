@@ -33,8 +33,8 @@ func (candidate PositiveSemidefiniteCandidate) IsPositiveSemidefinite(eigen Eige
 
     if ok {
         for _, val := range eigen.Values(nil) {
-            _, theta := cmplx.Polar(val)
-            if theta != 0 {
+            r, theta := cmplx.Polar(val)
+            if theta != 0 || r == 0 {
                 isPositiveSemidefinite = false
                 return
             }
