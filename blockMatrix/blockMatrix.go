@@ -8,12 +8,17 @@ func NewBlockMatrix(rows [][]*mat.Dense) *mat.Dense {
     var m, n int
     m, n = 0, 0
 
-    for _, row := range rows {
+    for i, row := range rows {
         k, _ := row[0].Dims()
         m += k
-    }
 
-    _, n = rows[0][0].Dims()
+        if (i == 0) {
+            for _, matrix := range row {
+                _, l := matrix.Dims()
+                n += l
+            }
+        }
+    }
 
     return mat.NewDense(m, n, nil)
 }

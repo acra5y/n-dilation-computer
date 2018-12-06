@@ -11,8 +11,12 @@ func createRows() (rows [][]*mat.Dense) {
     rows = make([][]*mat.Dense, 2)
 
     for i := range rows {
-        row := make([]*mat.Dense, 1)
-        row[0] = mat.NewDense(1, 3, nil)
+        row := make([]*mat.Dense, 3)
+
+        for j := range row {
+            row[j] = mat.NewDense(1, 3, nil)
+        }
+
         rows[i] = row
     }
     return
@@ -24,7 +28,7 @@ func TestNewBlockMatrix(t *testing.T) {
         rows [][]*mat.Dense
         expected *mat.Dense
     }{
-        {rows: createRows(), expected: mat.NewDense(2, 3, nil), desc: "returns correct matrix"},
+        {rows: createRows(), expected: mat.NewDense(2, 9, nil), desc: "returns correct matrix"},
     }
 
     for _, table := range tables {
