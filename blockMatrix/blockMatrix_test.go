@@ -7,28 +7,31 @@ import (
 
 var dummyMatrix = mat.NewDense(2, 2, nil)
 
-func createBlocks() (blocks [][]*mat.Dense) {
-    blocks = make([][]*mat.Dense, 1)
-    firstRow := make([]*mat.Dense, 1)
-    firstRow[0] = mat.NewDense(0, 0, nil)
-    blocks[0] = firstRow
+func createRows() (rows [][]*mat.Dense) {
+    rows = make([][]*mat.Dense, 2)
+
+    for i := range rows {
+        row := make([]*mat.Dense, 1)
+        row[0] = mat.NewDense(1, 3, nil)
+        rows[i] = row
+    }
     return
 }
 
 func TestNewBlockMatrix(t *testing.T) {
     tables := []struct {
         desc string
-        blocks [][]*mat.Dense
+        rows [][]*mat.Dense
         expected *mat.Dense
     }{
-        {blocks: createBlocks(), expected: mat.NewDense(0, 0, nil), desc: "returns correct matrix"},
+        {rows: createRows(), expected: mat.NewDense(2, 3, nil), desc: "returns correct matrix"},
     }
 
     for _, table := range tables {
         t.Run(table.desc, func(t *testing.T) {
             t.Parallel()
 
-            blockMatrix := NewBlockMatrix(table.blocks)
+            blockMatrix := NewBlockMatrix(table.rows)
 
             if !mat.Equal(blockMatrix, table.expected) {
                 t.Errorf("NewBlockMatrix returned wrong value, got: %v, want: %v.", blockMatrix, table.expected)
