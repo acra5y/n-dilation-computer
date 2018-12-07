@@ -1,24 +1,14 @@
 package blockMatrix
 
 import (
+    "math"
     "gonum.org/v1/gonum/mat"
 )
 
-func NewBlockMatrix(rows [][]*mat.Dense) (*mat.Dense, bool) {
-    var m, n int
-    m, n = 0, 0
+func NewBlockMatrixFromSquares(rows [][]*mat.Dense) (*mat.Dense, bool) {
+    var d0, d int
+    d0, _ = rows[0][0].Dims()
+    d = int(math.Pow(float64(d0), 2))
 
-    for i, row := range rows {
-        k, _ := row[0].Dims()
-        m += k
-
-        if (i == 0) {
-            for _, matrix := range row {
-                _, l := matrix.Dims()
-                n += l
-            }
-        }
-    }
-
-    return mat.NewDense(m, n, nil), true
+    return mat.NewDense(d, d, nil), true
 }
