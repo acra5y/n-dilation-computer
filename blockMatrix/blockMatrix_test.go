@@ -5,8 +5,6 @@ import (
     "testing"
 )
 
-var dummyMatrix = mat.NewDense(2, 2, nil)
-
 func createRows() (rows [][]*mat.Dense) {
     rows = make([][]*mat.Dense, 2)
 
