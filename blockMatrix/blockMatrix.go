@@ -4,7 +4,7 @@ import (
     "gonum.org/v1/gonum/mat"
 )
 
-func NewBlockMatrix(rows [][]*mat.Dense) *mat.Dense {
+func NewBlockMatrix(rows [][]*mat.Dense) (*mat.Dense, bool) {
     var m, n int
     m, n = 0, 0
 
@@ -20,5 +20,5 @@ func NewBlockMatrix(rows [][]*mat.Dense) *mat.Dense {
         }
     }
 
-    return mat.NewDense(m, n, nil)
+    return mat.NewDense(m, n, nil), true
 }
