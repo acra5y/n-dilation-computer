@@ -27,15 +27,20 @@ func TestNewBlockMatrix(t *testing.T) {
         desc string
         rows [][]*mat.Dense
         expected *mat.Dense
+        ok bool
     }{
-        {rows: createRows(), expected: mat.NewDense(2, 9, nil), desc: "returns correct matrix"},
+        {rows: createRows(), expected: mat.NewDense(2, 9, nil), desc: "returns correct matrix", ok: true},
     }
 
     for _, table := range tables {
         t.Run(table.desc, func(t *testing.T) {
             t.Parallel()
 
-            blockMatrix := NewBlockMatrix(table.rows)
+            blockMatrix, ok := NewBlockMatrix(table.rows)
+
+            if ok !=table.ok {
+                t.Errorf("NewBlockMatrix returned wrong value for ok, got: %t, want: %t.", ok, table.ok)
+            }
 
             if !mat.Equal(blockMatrix, table.expected) {
                 t.Errorf("NewBlockMatrix returned wrong value, got: %v, want: %v.", blockMatrix, table.expected)
