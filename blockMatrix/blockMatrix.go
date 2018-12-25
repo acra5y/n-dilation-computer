@@ -8,7 +8,7 @@ import (
 func NewBlockMatrixFromSquares(rows [][]*mat.Dense) (*mat.Dense, bool) {
     var d0, d int
     d0, _ = rows[0][0].Dims()
-    d = int(math.Pow(float64(d0), 2))
+    d = d0 * len(rows)
 
     var data []float64
     data = make([]float64, int(math.Pow(float64(d), 2)))
