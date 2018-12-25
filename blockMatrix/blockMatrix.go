@@ -17,7 +17,7 @@ func NewBlockMatrixFromSquares(rows [][]*mat.Dense) (*mat.Dense, bool) {
         for j := 0; j < d0; j++ {
             for k, matrix := range rows[i] {
                 raw := matrix.RawRowView(j)
-                offsetHandledBlockRows := len(rows[i]) * d
+                offsetHandledBlockRows := int(math.Pow(float64(d0), 2)) * len(rows)
                 offsetCurrentBlocks := j * len(rows[i]) * d0
                 offsetHandledBlocks := k * d0
                 index := i * offsetHandledBlockRows + offsetCurrentBlocks + offsetHandledBlocks
