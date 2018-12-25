@@ -27,6 +27,5 @@ func NewBlockMatrixFromSquares(rows [][]*mat.Dense) (*mat.Dense, bool) {
         }
     }
 
-
     return mat.NewDense(d, d, data), true
 }
