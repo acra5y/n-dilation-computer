@@ -2,22 +2,23 @@ package blockMatrix
 
 import (
     "gonum.org/v1/gonum/mat"
+    "math"
     "testing"
 )
 
-func createRows() (rows [][]*mat.Dense) {
-    rows = make([][]*mat.Dense, 2)
+func createRows(n, dim int) (rows [][]*mat.Dense) {
+    rows = make([][]*mat.Dense, n)
 
     for i := range rows {
-        row := make([]*mat.Dense, 2)
+        row := make([]*mat.Dense, n)
 
         for j := range row {
-        value := float64(2 * i + j)
-            data := make([]float64, 4)
+        value := float64(n * i + j)
+            data := make([]float64, int(math.Pow(float64(dim), 2)))
             for k, _ := range data {
                 data[k] = value
             }
-            row[j] = mat.NewDense(2, 2, data)
+            row[j] = mat.NewDense(dim, dim, data)
         }
 
         rows[i] = row
