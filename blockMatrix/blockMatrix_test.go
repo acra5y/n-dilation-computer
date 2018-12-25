@@ -12,7 +12,12 @@ func createRows() (rows [][]*mat.Dense) {
         row := make([]*mat.Dense, 2)
 
         for j := range row {
-            row[j] = mat.NewDense(2, 2, nil)
+        value := float64(2 * i + j)
+            data := make([]float64, 4)
+            for k, _ := range data {
+                data[k] = value
+            }
+            row[j] = mat.NewDense(2, 2, data)
         }
 
         rows[i] = row
@@ -27,7 +32,7 @@ func TestNewBlockMatrixFromSquares(t *testing.T) {
         expected *mat.Dense
         ok bool
     }{
-        {rows: createRows(), expected: mat.NewDense(4, 4, nil), desc: "returns correct matrix", ok: true},
+        {rows: createRows(), expected: mat.NewDense(4, 4, []float64{0,0,1,1,0,0,1,1,2,2,3,3,2,2,3,3}), desc: "returns correct matrix", ok: true},
     }
 
     for _, table := range tables {
