@@ -1,11 +1,41 @@
 package blockMatrix
 
 import (
+    "fmt"
     "math"
     "gonum.org/v1/gonum/mat"
 )
 
-func NewBlockMatrixFromSquares(rows [][]*mat.Dense) (*mat.Dense, bool) {
+func validateDims(rows [][]*mat.Dense) (bool, error) {
+    d0, _ := rows[0][0].Dims()
+    n0 := len(rows)
+
+    for i, row := range rows {
+        n := len(row)
+
+        if n != n0 {
+            return false, fmt.Errorf("Unexpected length of row: %d has length %d (Expecting %d)", i, n, n0)
+        }
+
+        for j, matrix := range row {
+            d1, d2 := matrix.Dims()
+
+            if d1 != d0 || d2 != d0 {
+                return false, fmt.Errorf("Unexpected dimension: (%d, %d) in row %d, col %d (Expecting (%d, %d))", d1, d2, i, j, d0, d0)
+            }
+        }
+    }
+
+    return true, nil
+}
+
+func NewBlockMatrixFromSquares(rows [][]*mat.Dense) (*mat.Dense, error) {
+    ok, err := validateDims(rows)
+
+    if !ok {
+       return mat.NewDense(0, 0, nil), err
+    }
+
     var d0, d, entriesPerBlock, entriesPerBlockRow, blockDim int
     d0, _ = rows[0][0].Dims()
     entriesPerBlock = int(math.Pow(float64(d0), 2))
@@ -31,5 +61,5 @@ func NewBlockMatrixFromSquares(rows [][]*mat.Dense) (*mat.Dense, bool) {
         }
     }
 
-    return mat.NewDense(d, d, data), true
+    return mat.NewDense(d, d, data), nil
 }
