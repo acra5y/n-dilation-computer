@@ -24,7 +24,7 @@ func NewBlockMatrixFromSquares(rows [][]*mat.Dense) (*mat.Dense, bool) {
             for k, matrix := range rows[i] {
                 raw := matrix.RawRowView(j)
                 offsetHandledBlocks := k * d0
-                index := i * offsetHandledBlockRows + offsetCurrentBlocks + offsetHandledBlocks
+                index := offsetHandledBlockRows + offsetCurrentBlocks + offsetHandledBlocks
 
                 data = append(data[:index], append(raw, data[(index + d0):]...)...)
             }
