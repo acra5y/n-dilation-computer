@@ -33,7 +33,7 @@ func TestUnitaryNDilation(t *testing.T) {
 		}
 
 		if !mat.Equal(unitary, table.value) {
-			t.Errorf("Wrong matrix returned, got: %v, want: %v", mat.NewDense(2, 2, nil), unitary)
+			t.Errorf("Wrong matrix returned, want: %v, got: %v", mat.NewDense(2, 2, nil), unitary)
 		}
 	}
 }
