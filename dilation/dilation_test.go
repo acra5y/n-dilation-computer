@@ -1,4 +1,4 @@
-package ndilation
+package dilation
 
 import (
 	"github.com/acra5y/n-dilation-computer/positiveDefinite"
@@ -26,14 +26,11 @@ func TestUnitaryNDilation(t *testing.T) {
 	}
 
 	for _, table := range tables {
-		ndilation := Dilation{ N: 1 }
-		err := ndilation.UnitaryNDilation(isPositiveDefiniteMock, squareRootMock, newBlockMatrixFromSquaresMock, table.value)
+		unitary, err := UnitaryNDilation(isPositiveDefiniteMock, squareRootMock, newBlockMatrixFromSquaresMock, table.value)
 
 		if err != nil {
 			t.Errorf("Unexpected err, want: %v, got: %v", nil, err)
 		}
-
-		unitary := ndilation.Value()
 
 		if !mat.Equal(unitary, table.value) {
 			t.Errorf("Wrong matrix returned, got: %v, want: %v", mat.NewDense(2, 2, nil), unitary)
