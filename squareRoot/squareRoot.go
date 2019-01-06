@@ -1,6 +1,7 @@
 package squareRoot
 
 import (
+    "github.com/acra5y/n-dilation-computer/eye"
     "gonum.org/v1/gonum/mat"
     "math"
 )
@@ -16,14 +17,6 @@ import (
     .
     6. Set n × n matrix Q = S_{i+1}(S_{i}^{−1}) − I.
 */
-
-func eye(n int) *mat.Dense {
-    m := mat.NewDense(n, n, nil)
-    for i := 0; i < n; i++ {
-        m.Set(i, i, 1)
-    }
-    return m
-}
 
 func inverseViaQR(m *mat.Dense) (inverse *mat.Dense) {
     n, _ := m.Dims()
@@ -70,7 +63,7 @@ func Calculate(c *mat.Dense) (sq *mat.Dense, err error) {
     err = nil
     n, _ := c.Dims()
     var m1, m2, m3, eyeN, inverse, p, z *mat.Dense
-    eyeN = eye(n)
+    eyeN = eye.OfDimension(n)
     sq = mat.NewDense(n, n, nil)
     m1 = mat.NewDense(n, n, nil)
     m2 = mat.NewDense(n, n, nil)
