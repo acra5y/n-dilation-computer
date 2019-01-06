@@ -12,7 +12,7 @@ func TestCalculate(t *testing.T) {
         desc string
         value *mat.Dense
     }{
-        {value: eye(2), desc: "square root"},
+        {value: mat.NewDense(2, 2, []float64{1,0,0,1,}), desc: "square root"},
     }
 
     for _, table := range tables {
