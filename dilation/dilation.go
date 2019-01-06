@@ -5,7 +5,7 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-type isPositiveDefinite func(positiveDefinite.EigenComputer) (bool, error)
+type isPositiveDefinite func(positiveDefinite.EigenComputer, *mat.Dense) (bool, error)
 
 type squareRoot func(*mat.Dense) (*mat.Dense, error)
 
