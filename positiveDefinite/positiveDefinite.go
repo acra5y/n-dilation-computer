@@ -6,10 +6,6 @@ import (
     "math/cmplx"
 )
 
-type PositiveDefiniteCandidate struct {
-    Value *mat.Dense
-}
-
 type EigenComputer interface {
     Factorize(a mat.Matrix, left, right bool) bool
     Values(dst []complex128) []complex128
@@ -19,13 +15,13 @@ func isSymmetric(a mat.Matrix) bool {
     return mat.Equal(a, a.T())
 }
 
-func (candidate PositiveDefiniteCandidate) IsPositiveDefinite(eigen EigenComputer) (isPositiveDefinite bool, err error) {
-    m, n := candidate.Value.Dims()
+func IsPositiveDefinite(eigen EigenComputer, candidate *mat.Dense) (isPositiveDefinite bool, err error) {
+    m, n := candidate.Dims()
     c := mat.NewDense(m, n, nil)
-    c.Clone(candidate.Value)
+    c.Clone(candidate)
     err = nil
     isPositiveDefinite = true
-    if !isSymmetric(candidate.Value) {
+    if !isSymmetric(candidate) {
         isPositiveDefinite = false
         return
     }
@@ -41,5 +37,5 @@ func (candidate PositiveDefiniteCandidate) IsPositiveDefinite(eigen EigenCompute
         }
         return
     }
-    return false, fmt.Errorf("eigen: Factorize unsuccessful %v", mat.Formatted(candidate.Value, mat.Prefix("    "), mat.Squeeze()))
+    return false, fmt.Errorf("eigen: Factorize unsuccessful %v", mat.Formatted(candidate, mat.Prefix("    "), mat.Squeeze()))
 }

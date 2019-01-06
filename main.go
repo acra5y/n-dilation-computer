@@ -34,10 +34,9 @@ func isPositiveDefinite(a *mat.Dense, c chan PositiveDefiniteResult) {
     v := mat.NewDense(m, n, nil)
     v.Clone(a)
     eigen := mat.Eigen{}
-    candidate := positiveDefinite.PositiveDefiniteCandidate{Value: a}
-    result, _ := candidate.IsPositiveDefinite(&eigen)
+    result, _ := positiveDefinite.IsPositiveDefinite(&eigen, a)
 
-    c <- PositiveDefiniteResult{isPositiveDefinite: result, matrix: candidate.Value}
+    c <- PositiveDefiniteResult{isPositiveDefinite: result, matrix: a}
 }
 
 func main() {
