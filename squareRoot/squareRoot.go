@@ -5,11 +5,6 @@ import (
     "math"
 )
 
-type SquareRoot struct {
-    C *mat.Dense
-    z *mat.Dense
-}
-
 // https://scholarworks.rit.edu/cgi/viewcontent.cgi?article=10419&context=theses
 
 /*
@@ -49,14 +44,14 @@ func inverseViaQR(m *mat.Dense) (inverse *mat.Dense) {
     return
 }
 
-func (squareRoot *SquareRoot) nextGuess(prePredecessor *mat.Dense, predecessor *mat.Dense) (guess *mat.Dense) {
-    n, _ := squareRoot.C.Dims()
+func nextGuess(c, z, prePredecessor, predecessor *mat.Dense) (guess *mat.Dense) {
+    n, _ := c.Dims()
     var doubled, p *mat.Dense
     guess = mat.NewDense(n, n, nil)
     doubled = mat.NewDense(n, n, nil)
     p = mat.NewDense(n, n, nil)
     doubled.Scale(2, predecessor)
-    p.Product(squareRoot.z, prePredecessor)
+    p.Product(z, prePredecessor)
     guess.Add(doubled, p)
     return
 }
@@ -71,10 +66,10 @@ func isIllConditioned(m* mat.Dense, iteration int) bool {
     return math.Pow(max, float64(n)) / det > 1e15
 }
 
-func (squareRoot *SquareRoot) Calculate() (sq *mat.Dense, err error) {
+func Calculate(c *mat.Dense) (sq *mat.Dense, err error) {
     err = nil
-    n, _ := squareRoot.C.Dims()
-    var m1, m2, m3, eyeN, inverse, p *mat.Dense
+    n, _ := c.Dims()
+    var m1, m2, m3, eyeN, inverse, p, z *mat.Dense
     eyeN = eye(n)
     sq = mat.NewDense(n, n, nil)
     m1 = mat.NewDense(n, n, nil)
@@ -82,12 +77,12 @@ func (squareRoot *SquareRoot) Calculate() (sq *mat.Dense, err error) {
     m3 = mat.NewDense(n, n, nil)
     p = mat.NewDense(n, n, nil)
     m1.Clone(eyeN)
-    m2.Clone(squareRoot.C)
-    squareRoot.z = mat.NewDense(n, n, nil)
-    squareRoot.z.Sub(squareRoot.C, eyeN)
+    m2.Clone(c)
+    z = mat.NewDense(n, n, nil)
+    z.Sub(c, eyeN)
 
     for i := 1; i <= 100; i++ {
-        m3 = squareRoot.nextGuess(m1, m2)
+        m3 = nextGuess(c, z, m1, m2)
         m1.Clone(m2)
         m2.Clone(m3)
 

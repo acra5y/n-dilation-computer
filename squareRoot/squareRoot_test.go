@@ -19,10 +19,7 @@ func TestCalculate(t *testing.T) {
         table := table
         t.Run(table.desc, func(t *testing.T) {
             t.Parallel()
-            squareRoot := SquareRoot{
-                C: table.value,
-            }
-            res, err := squareRoot.Calculate()
+            res, err := Calculate(table.value)
 
             if err != nil {
                 t.Errorf("Error: %v.", err)

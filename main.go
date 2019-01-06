@@ -71,8 +71,7 @@ func main() {
         v := mat.NewDense(m, n, nil)
         v.Clone(x.matrix)
 
-        sqr := squareRoot.SquareRoot{ C: v }
-        res, _ := sqr.Calculate()
+        res, _ := squareRoot.Calculate(v)
         prod := mat.NewDense(m, n, nil)
         prod.Product(res, res)
         fmt.Printf("M=%v sq=%v sq^2=%v\n", v, res, prod)
@@ -84,8 +83,7 @@ func main() {
         v := mat.NewDense(m, n, nil)
         v.Clone(y.matrix)
 
-        sqr := squareRoot.SquareRoot{ C: v }
-        res, _ := sqr.Calculate()
+        res, _ := squareRoot.Calculate(v)
         prod := mat.NewDense(m, n, nil)
         prod.Product(res, res)
         fmt.Printf("M=%v sq=%v sq^2=%v\n", v, res, prod)
