@@ -11,11 +11,11 @@ func isPositiveDefiniteMock(a positiveDefinite.EigenComputer, candidate *mat.Den
 }
 
 func squareRootMock(a *mat.Dense) (*mat.Dense, error) {
-	return mat.NewDense(1, 1, nil), nil
+	return mat.NewDense(2, 2, nil), nil
 }
 
 func newBlockMatrixFromSquaresMock(a [][]*mat.Dense) (*mat.Dense, error) {
-	return mat.NewDense(1, 1, nil), nil
+	return mat.NewDense(2, 2, nil), nil
 }
 
 func TestUnitaryNDilation(t *testing.T) {
@@ -33,7 +33,7 @@ func TestUnitaryNDilation(t *testing.T) {
 		}
 
 		if !mat.Equal(unitary, table.value) {
-			t.Errorf("Wrong matrix returned, want: %v, got: %v", mat.NewDense(2, 2, nil), unitary)
+			t.Errorf("Wrong matrix returned, want: %v, got: %v", mat.NewDense(4, 4, nil), unitary)
 		}
 	}
 }
