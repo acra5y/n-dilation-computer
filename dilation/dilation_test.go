@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func isPositiveDefiniteMock(a positiveDefinite.EigenComputer) (bool, error) {
+func isPositiveDefiniteMock(a positiveDefinite.EigenComputer, candidate *mat.Dense) (bool, error) {
 	return true, nil
 }
 
