@@ -6,21 +6,15 @@ import (
 	"testing"
 )
 
-type ValidationMock struct {}
-
-func (validationMock ValidationMock) IsPositiveDefinite(a positiveDefinite.EigenComputer) (bool, error) {
+func isPositiveDefiniteMock(a positiveDefinite.EigenComputer) (bool, error) {
 	return true, nil
 }
 
-type SquareRootMock struct {}
-
-func (squareRootMock SquareRootMock) Calculate(a *mat.Dense) (*mat.Dense, error) {
+func squareRootMock(a *mat.Dense) (*mat.Dense, error) {
 	return mat.NewDense(1, 1, nil), nil
 }
 
-type BlockMatrixMock struct {}
-
-func (blockMatrixMock BlockMatrixMock) NewBlockMatrixFromSquares(a [][]*mat.Dense) (*mat.Dense, error) {
+func newBlockMatrixFromSquaresMock(a [][]*mat.Dense) (*mat.Dense, error) {
 	return mat.NewDense(1, 1, nil), nil
 }
 
@@ -33,7 +27,7 @@ func TestUnitaryNDilation(t *testing.T) {
 
 	for _, table := range tables {
 		ndilation := Dilation{ N: 1 }
-		err := ndilation.UnitaryNDilation(ValidationMock{}, SquareRootMock{}, BlockMatrixMock{}, table.value)
+		err := ndilation.UnitaryNDilation(isPositiveDefiniteMock, squareRootMock, newBlockMatrixFromSquaresMock, table.value)
 
 		if err != nil {
 			t.Errorf("Unexpected err, want: %v, got: %v", nil, err)
