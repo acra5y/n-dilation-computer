@@ -17,13 +17,13 @@ func defectOperator (isPD isPositiveDefinite, sqrt squareRoot, t mat.Matrix) (*m
 	n, _ := t.Dims()
 	eye := eye.OfDimension(n)
 
-	t_times_t_transpose := mat.NewDense(n, n, nil)
+	tTimesTTransposed := mat.NewDense(n, n, nil)
 
-	t_times_t_transpose.Product(t, t.T())
+	tTimesTTransposed.Product(t, t.T())
 
 	defectSquared := mat.NewDense(n, n, nil)
 
-	defectSquared.Sub(eye, t_times_t_transpose)
+	defectSquared.Sub(eye, tTimesTTransposed)
 
 	if pd, _ := isPD(&mat.Eigen{}, defectSquared); !pd {
 		return mat.NewDense(0, 0, nil), fmt.Errorf("Input is not a contraction")
@@ -41,19 +41,19 @@ func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix n
 		return mat.NewDense(0,0, nil), fmt.Errorf("Matrix does not have square dimension")
 	}
 
-	d_t, err := defectOperator(isPD, sqrt, t)
+	defect, err := defectOperator(isPD, sqrt, t)
 
 	if err != nil {
 		return mat.NewDense(0,0, nil), err
 	}
 
-	d_t_transpose, err := defectOperator(isPD, sqrt, t.T())
+	defectOfTransposed, err := defectOperator(isPD, sqrt, t.T())
 
 	if err != nil {
 		return mat.NewDense(0,0, nil), err
 	}
 
-	unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, d_t,},[]*mat.Dense{d_t_transpose, mat.NewDense(m, m, nil),},})
+	unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, defect,},[]*mat.Dense{defectOfTransposed, mat.NewDense(m, m, nil),},})
 
 	if err != nil {
 		return mat.NewDense(0,0, nil), err
