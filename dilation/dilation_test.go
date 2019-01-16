@@ -6,15 +6,22 @@ import (
     "testing"
 )
 
-func isPositiveDefiniteMock(a positiveDefinite.EigenComputer, candidate *mat.Dense) (bool, error) {
-    return true, nil
+func testIsPositiveDefinite(t *testing.T, expected []*mat.Dense) isPositiveDefinite {
+    calls := 0
+    return func(a positiveDefinite.EigenComputer, candidate *mat.Dense) (bool, error) {
+        if !mat.Equal(expected[calls], candidate) {
+            t.Errorf("Unexpected argument in call to testIsPositiveDefinite. Got %v: ,want: %v", candidate, expected[calls])
+        }
+        calls++
+        return true, nil
+    }
 }
 
 func testSquareRoot(t *testing.T, expected []*mat.Dense) squareRoot {
     calls := 0
     return func(a *mat.Dense) (*mat.Dense, error) {
         if !mat.Equal(expected[calls], a) {
-            t.Errorf("Unexpected argument in call %d to squareRoot. Got: %v, want: %v", calls + 1, a, expected)
+            t.Errorf("Unexpected argument in call %d to squareRoot. Got: %v, want: %v", calls + 1, a, expected[calls])
         }
         calls++
         return mat.NewDense(2, 2, nil), nil
@@ -52,7 +59,7 @@ func TestUnitaryNDilation(t *testing.T) {
 
     for _, table := range tables {
         unitary, err := UnitaryNDilation(
-            isPositiveDefiniteMock,
+            testIsPositiveDefinite(t, table.expectedInSqrt),
             testSquareRoot(t, table.expectedInSqrt),
             testNewBlockMatrixFromSquares(t, table.expectedRows),
             table.value,
