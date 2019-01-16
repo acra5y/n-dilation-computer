@@ -21,20 +21,42 @@ func testSquareRoot(t *testing.T, expected []*mat.Dense) squareRoot {
     }
 }
 
-func newBlockMatrixFromSquaresMock(a [][]*mat.Dense) (*mat.Dense, error) {
-    return mat.NewDense(2, 2, nil), nil
+func testNewBlockMatrixFromSquares(t *testing.T, expected [][]*mat.Dense) newBlockMatrixFromSquares {
+    return func(rows [][]*mat.Dense) (*mat.Dense, error) {
+        for i, row := range rows {
+            for j, m := range row {
+                if !mat.Equal(expected[i][j], m) {
+                    t.Errorf("Unexpected argument in call to newBlockMatrixFromSquares. Wrong block at position (%d, %d), got : %v, want: %v", i, j, m, expected[i][j])
+                }
+            }
+        }
+        return mat.NewDense(2, 2, nil), nil
+    }
 }
 
 func TestUnitaryNDilation(t *testing.T) {
     tables := []struct {
         value *mat.Dense
         expectedInSqrt []*mat.Dense
+        expectedRows [][]*mat.Dense
     }{
-        {value: mat.NewDense(2, 2, nil), expectedInSqrt: []*mat.Dense{mat.NewDense(2, 2, []float64{1,0,0,1,}),mat.NewDense(2, 2, []float64{1,0,0,1,}),},},
+        {
+            value: mat.NewDense(2, 2, nil),
+            expectedInSqrt: []*mat.Dense{mat.NewDense(2, 2, []float64{1,0,0,1,}),mat.NewDense(2, 2, []float64{1,0,0,1,}),},
+            expectedRows: [][]*mat.Dense{
+                []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),},
+                []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),},
+            },
+        },
     }
 
     for _, table := range tables {
-        unitary, err := UnitaryNDilation(isPositiveDefiniteMock, testSquareRoot(t, table.expectedInSqrt), newBlockMatrixFromSquaresMock, table.value)
+        unitary, err := UnitaryNDilation(
+            isPositiveDefiniteMock,
+            testSquareRoot(t, table.expectedInSqrt),
+            testNewBlockMatrixFromSquares(t, table.expectedRows),
+            table.value,
+        )
 
         if err != nil {
             t.Errorf("Unexpected err, want: %v, got: %v", nil, err)
