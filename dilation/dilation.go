@@ -1,10 +1,10 @@
 package dilation
 
 import (
-	"fmt"
-	"github.com/acra5y/n-dilation-computer/eye"
-	"github.com/acra5y/n-dilation-computer/positiveDefinite"
-	"gonum.org/v1/gonum/mat"
+    "fmt"
+    "github.com/acra5y/n-dilation-computer/eye"
+    "github.com/acra5y/n-dilation-computer/positiveDefinite"
+    "gonum.org/v1/gonum/mat"
 )
 
 type isPositiveDefinite func(positiveDefinite.EigenComputer, *mat.Dense) (bool, error)
@@ -14,62 +14,62 @@ type squareRoot func(*mat.Dense) (*mat.Dense, error)
 type newBlockMatrixFromSquares func([][]*mat.Dense) (*mat.Dense, error)
 
 func defectOperator (isPD isPositiveDefinite, sqrt squareRoot, t mat.Matrix) (*mat.Dense, error) {
-	n, _ := t.Dims()
-	eye := eye.OfDimension(n)
+    n, _ := t.Dims()
+    eye := eye.OfDimension(n)
 
-	tTimesTTransposed := mat.NewDense(n, n, nil)
+    tTimesTTransposed := mat.NewDense(n, n, nil)
 
-	tTimesTTransposed.Product(t, t.T())
+    tTimesTTransposed.Product(t, t.T())
 
-	defectSquared := mat.NewDense(n, n, nil)
+    defectSquared := mat.NewDense(n, n, nil)
 
-	defectSquared.Sub(eye, tTimesTTransposed)
+    defectSquared.Sub(eye, tTimesTTransposed)
 
-	if pd, _ := isPD(&mat.Eigen{}, defectSquared); !pd {
-		return mat.NewDense(0, 0, nil), fmt.Errorf("Input is not a contraction")
-	}
+    if pd, _ := isPD(&mat.Eigen{}, defectSquared); !pd {
+        return mat.NewDense(0, 0, nil), fmt.Errorf("Input is not a contraction")
+    }
 
-	defectOp, _ := sqrt(defectSquared)
+    defectOp, _ := sqrt(defectSquared)
 
-	return defectOp, nil
+    return defectOp, nil
 }
 
 func negativeTranspose(t *mat.Dense) *mat.Dense {
-	m, n := t.Dims()
-	data := make([]float64, m * n)
+    m, n := t.Dims()
+    data := make([]float64, m * n)
 
-	for i := 0; i < m; i++ {
-		for j := 0; j < n; j++ {
-			data[m * i + j] = (-1) * t.At(j, i)
-		}
-	}
-	return mat.NewDense(m, n, data)
+    for i := 0; i < m; i++ {
+        for j := 0; j < n; j++ {
+            data[m * i + j] = (-1) * t.At(j, i)
+        }
+    }
+    return mat.NewDense(m, n, data)
 }
 
 func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix newBlockMatrixFromSquares, t *mat.Dense) (*mat.Dense, error) {
-	m, n := t.Dims()
+    m, n := t.Dims()
 
-	if m != n {
-		return mat.NewDense(0,0, nil), fmt.Errorf("Matrix does not have square dimension")
-	}
+    if m != n {
+        return mat.NewDense(0,0, nil), fmt.Errorf("Matrix does not have square dimension")
+    }
 
-	defect, err := defectOperator(isPD, sqrt, t)
+    defect, err := defectOperator(isPD, sqrt, t)
 
-	if err != nil {
-		return mat.NewDense(0,0, nil), err
-	}
+    if err != nil {
+        return mat.NewDense(0,0, nil), err
+    }
 
-	defectOfTransposed, err := defectOperator(isPD, sqrt, t.T())
+    defectOfTransposed, err := defectOperator(isPD, sqrt, t.T())
 
-	if err != nil {
-		return mat.NewDense(0,0, nil), err
-	}
+    if err != nil {
+        return mat.NewDense(0,0, nil), err
+    }
 
-	unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, defect,},[]*mat.Dense{defectOfTransposed, negativeTranspose(t),},})
+    unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, defect,},[]*mat.Dense{defectOfTransposed, negativeTranspose(t),},})
 
-	if err != nil {
-		return mat.NewDense(0,0, nil), err
-	}
+    if err != nil {
+        return mat.NewDense(0,0, nil), err
+    }
 
     return unitary, nil
 }
