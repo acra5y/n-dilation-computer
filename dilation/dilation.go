@@ -46,6 +46,8 @@ func negativeTranspose(t *mat.Dense) *mat.Dense {
     return mat.NewDense(m, n, data)
 }
 
+// See E. Levy und O. M. Shalit: Dilation theory in finite dimensions: the possible, the impossible and the unknown. Rocky Mountain J. Math., 44(1):203-221, 2014
+
 func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix newBlockMatrixFromSquares, t *mat.Dense) (*mat.Dense, error) {
     m, n := t.Dims()
 
