@@ -30,9 +30,16 @@ func testSquareRoot(t *testing.T, expected []*mat.Dense) squareRoot {
 
 func testNewBlockMatrixFromSquares(t *testing.T, expected [][]*mat.Dense) newBlockMatrixFromSquares {
     return func(rows [][]*mat.Dense) (*mat.Dense, error) {
+        if len(rows) != len(expected) {
+            t.Errorf("Unexpected argument in call to newBlockMatrixFromSquares. Wron length of rows, got: %d, want: %d", len(rows), len(expected))
+        }
         for i, row := range rows {
+            expectedRow := expected[i]
+            if len(row) != len(expectedRow) {
+            t.Errorf("Unexpected argument in call to newBlockMatrixFromSquares. Wron length of row %d, got: %d, want: %d", i, len(row), len(expectedRow))
+            }
             for j, m := range row {
-                if !mat.Equal(expected[i][j], m) {
+                if !mat.Equal(expectedRow[j], m) {
                     t.Errorf("Unexpected argument in call to newBlockMatrixFromSquares. Wrong block at position (%d, %d), got : %v, want: %v", i, j, m, expected[i][j])
                 }
             }
