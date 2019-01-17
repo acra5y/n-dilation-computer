@@ -69,8 +69,8 @@ func TestUnitaryNDilation(t *testing.T) {
             t.Errorf("Unexpected err, want: %v, got: %v", nil, err)
         }
 
-        if !mat.Equal(unitary, table.value) {
-            t.Errorf("Wrong matrix returned, want: %v, got: %v", mat.NewDense(4, 4, nil), unitary)
+        if !mat.Equal(unitary, mat.NewDense(2, 2, nil)) {
+            t.Errorf("Wrong matrix returned, want: %v, got: %v", mat.NewDense(2, 2, nil), unitary)
         }
     }
 }
