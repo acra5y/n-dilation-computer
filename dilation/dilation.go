@@ -67,7 +67,7 @@ func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix n
         return mat.NewDense(0,0, nil), err
     }
 
-    unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, defect,},[]*mat.Dense{defectOfTransposed, negativeTranspose(t),},})
+    unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, defectOfTransposed,},[]*mat.Dense{defect, negativeTranspose(t),},})
 
     if err != nil {
         return mat.NewDense(0,0, nil), err
