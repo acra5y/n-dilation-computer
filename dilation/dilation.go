@@ -48,7 +48,7 @@ func negativeTranspose(t *mat.Dense) *mat.Dense {
 
 // See E. Levy und O. M. Shalit: Dilation theory in finite dimensions: the possible, the impossible and the unknown. Rocky Mountain J. Math., 44(1):203-221, 2014
 
-func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix newBlockMatrixFromSquares, t *mat.Dense) (*mat.Dense, error) {
+func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix newBlockMatrixFromSquares, t *mat.Dense, degree int) (*mat.Dense, error) {
     m, n := t.Dims()
 
     if m != n {
@@ -67,7 +67,40 @@ func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix n
         return mat.NewDense(0,0, nil), err
     }
 
-    unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, defectOfTransposed,},[]*mat.Dense{defect, negativeTranspose(t),},})
+    rows := make([][]*mat.Dense, degree + 1)
+
+    firstRow := make([]*mat.Dense, degree + 1)
+    secondRow := make([]*mat.Dense, degree + 1)
+
+    blockDim := degree + 1
+    firstRow[0] = t
+    firstRow[blockDim - 1] = defectOfTransposed
+    secondRow[0] = defect
+    secondRow[blockDim - 1] = negativeTranspose(t)
+
+    if degree > 1 {
+        for i := 1; i < blockDim - 1; i++ {
+            firstRow[i] = mat.NewDense(m, n, nil)
+            secondRow[i] = mat.NewDense(m, n, nil)
+        }
+
+        for i := 2; i < blockDim; i++ {
+            row := make([]*mat.Dense, blockDim)
+            for j := 0; j < blockDim; j++ {
+                if j == i - 1 {
+                    row[j] = eye.OfDimension(m)
+                } else {
+                    row[j] = mat.NewDense(m, n, nil)
+                }
+            }
+            rows[i] = row
+        }
+    }
+
+    rows[0] = firstRow
+    rows[1] = secondRow
+
+    unitary, err := newBlockMatrix(rows)
 
     if err != nil {
         return mat.NewDense(0,0, nil), err

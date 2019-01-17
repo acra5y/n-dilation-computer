@@ -43,12 +43,16 @@ func testNewBlockMatrixFromSquares(t *testing.T, expected [][]*mat.Dense) newBlo
 
 func TestUnitaryNDilation(t *testing.T) {
     tables := []struct {
+        desc string
         value *mat.Dense
+        degree int
         expectedInSqrt []*mat.Dense
         expectedRows [][]*mat.Dense
     }{
         {
+            desc: "Works for degree 1",
             value: mat.NewDense(2, 2, nil),
+            degree: 1,
             expectedInSqrt: []*mat.Dense{mat.NewDense(2, 2, []float64{1,0,0,1,}),mat.NewDense(2, 2, []float64{1,0,0,1,}),},
             expectedRows: [][]*mat.Dense{
                 []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),},
@@ -56,29 +60,47 @@ func TestUnitaryNDilation(t *testing.T) {
             },
         },
         {
+            desc: "Uses negative transpose",
             value: mat.NewDense(2, 2, []float64{0.5,0.5,0,0.5,}),
+            degree: 1,
             expectedInSqrt: []*mat.Dense{mat.NewDense(2, 2, []float64{0.5,-0.25,-0.25,0.75,}),mat.NewDense(2, 2, []float64{0.75,-0.25,-0.25,0.5,}),},
             expectedRows: [][]*mat.Dense{
                 []*mat.Dense{mat.NewDense(2, 2, []float64{0.5,0.5,0,0.5,}),mat.NewDense(2, 2, nil),},
                 []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, []float64{-0.5,0,-0.5,-0.5}),},
             },
         },
+        {
+            desc: "Works for degree > 1",
+            value: mat.NewDense(2, 2, []float64{0.5,0.5,0,0.5,}),
+            degree: 4,
+            expectedInSqrt: []*mat.Dense{mat.NewDense(2, 2, []float64{0.5,-0.25,-0.25,0.75,}),mat.NewDense(2, 2, []float64{0.75,-0.25,-0.25,0.5,}),},
+            expectedRows: [][]*mat.Dense{
+                []*mat.Dense{mat.NewDense(2, 2, []float64{0.5,0.5,0,0.5,}),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),},
+                []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, []float64{-0.5,0,-0.5,-0.5}),},
+                []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, []float64{1,0,0,1,}),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2,nil),},
+                []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, []float64{1,0,0,1,}),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),},
+                []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),mat.NewDense(2, 2, []float64{1,0,0,1,}),mat.NewDense(2, 2, nil),},
+            },
+        },
     }
 
     for _, table := range tables {
-        unitary, err := UnitaryNDilation(
-            testIsPositiveDefinite(t, table.expectedInSqrt),
-            testSquareRoot(t, table.expectedInSqrt),
-            testNewBlockMatrixFromSquares(t, table.expectedRows),
-            table.value,
-        )
+        t.Run(table.desc, func(t *testing.T) {
+            unitary, err := UnitaryNDilation(
+                testIsPositiveDefinite(t, table.expectedInSqrt),
+                testSquareRoot(t, table.expectedInSqrt),
+                testNewBlockMatrixFromSquares(t, table.expectedRows),
+                table.value,
+                table.degree,
+            )
 
-        if err != nil {
-            t.Errorf("Unexpected err, want: %v, got: %v", nil, err)
-        }
+            if err != nil {
+                t.Errorf("Unexpected err, want: %v, got: %v", nil, err)
+            }
 
-        if !mat.Equal(unitary, mat.NewDense(2, 2, nil)) {
-            t.Errorf("Wrong matrix returned, want: %v, got: %v", mat.NewDense(2, 2, nil), unitary)
-        }
+            if !mat.Equal(unitary, mat.NewDense(2, 2, nil)) {
+                t.Errorf("Wrong matrix returned, want: %v, got: %v", mat.NewDense(2, 2, nil), unitary)
+            }
+        })
     }
 }
