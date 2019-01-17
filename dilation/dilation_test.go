@@ -55,6 +55,14 @@ func TestUnitaryNDilation(t *testing.T) {
                 []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, nil),},
             },
         },
+        {
+            value: mat.NewDense(2, 2, []float64{0.5,0.5,0,0.5,}),
+            expectedInSqrt: []*mat.Dense{mat.NewDense(2, 2, []float64{0.5,-0.25,-0.25,0.75,}),mat.NewDense(2, 2, []float64{0.75,-0.25,-0.25,0.5,}),},
+            expectedRows: [][]*mat.Dense{
+                []*mat.Dense{mat.NewDense(2, 2, []float64{0.5,0.5,0,0.5,}),mat.NewDense(2, 2, nil),},
+                []*mat.Dense{mat.NewDense(2, 2, nil),mat.NewDense(2, 2, []float64{-0.5,0,-0.5,-0.5}),},
+            },
+        },
     }
 
     for _, table := range tables {

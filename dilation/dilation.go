@@ -34,6 +34,18 @@ func defectOperator (isPD isPositiveDefinite, sqrt squareRoot, t mat.Matrix) (*m
 	return defectOp, nil
 }
 
+func negativeTranspose(t *mat.Dense) *mat.Dense {
+	m, n := t.Dims()
+	data := make([]float64, m * n)
+
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			data[m * i + j] = (-1) * t.At(j, i)
+		}
+	}
+	return mat.NewDense(m, n, data)
+}
+
 func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix newBlockMatrixFromSquares, t *mat.Dense) (*mat.Dense, error) {
 	m, n := t.Dims()
 
@@ -53,7 +65,7 @@ func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix n
 		return mat.NewDense(0,0, nil), err
 	}
 
-	unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, defect,},[]*mat.Dense{defectOfTransposed, mat.NewDense(m, m, nil),},})
+	unitary, err := newBlockMatrix([][]*mat.Dense{[]*mat.Dense{t, defect,},[]*mat.Dense{defectOfTransposed, negativeTranspose(t),},})
 
 	if err != nil {
 		return mat.NewDense(0,0, nil), err
