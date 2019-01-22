@@ -19,10 +19,15 @@ Post a request to `/dilation` with a json body containing the following fields:
 
 ```json
 	{
-		"value": [0.5,0.25,0.5,0], // the contraction in row-major order,
-		"degree": 2 // the "N" in the unitary N dilation, the degree N as the upper boundary for which exponents the dilation condition should hold true
+		"value": [0.5,0.25,0.5,0],
+		"degree": 2
 	}
 ```
+
+Field explanation:
+- value: The contraction in row-major order
+- degree: The "N" in the unitary N dilation, the degree N as the upper boundary for which exponents the dilation condition should hold true
+
 
 The response will be a json containing the dilation:
 
