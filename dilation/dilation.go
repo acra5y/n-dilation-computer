@@ -27,18 +27,6 @@ func defectOperatorSquared (t mat.Matrix) *mat.Dense {
     return defectSquared
 }
 
-func defectOperator (isPD isPositiveDefinite, sqrt squareRoot, t mat.Matrix) (*mat.Dense, error) {
-    defectSquared := defectOperatorSquared(t)
-
-    if pd, _ := isPD(&mat.Eigen{}, defectSquared); !pd {
-        return mat.NewDense(0, 0, nil), fmt.Errorf("Input is not a contraction")
-    }
-
-    defectOp, _ := sqrt(defectSquared)
-
-    return defectOp, nil
-}
-
 func negativeTranspose(t *mat.Dense) *mat.Dense {
     m, n := t.Dims()
     data := make([]float64, m * n)
@@ -60,17 +48,15 @@ func UnitaryNDilation(isPD isPositiveDefinite, sqrt squareRoot, newBlockMatrix n
         return mat.NewDense(0,0, nil), fmt.Errorf("Matrix does not have square dimension")
     }
 
-    defect, err := defectOperator(isPD, sqrt, t)
+    defectSquared := defectOperatorSquared(t)
 
-    if err != nil {
-        return mat.NewDense(0,0, nil), err
+    if pd, _ := isPD(&mat.Eigen{}, defectSquared); !pd {
+        return mat.NewDense(0, 0, nil), fmt.Errorf("Input is not a contraction")
     }
 
-    defectOfTransposed, err := defectOperator(isPD, sqrt, t.T())
-
-    if err != nil {
-        return mat.NewDense(0,0, nil), err
-    }
+    defectSquaredOfTranspose := defectOperatorSquared(t.T())
+    defect, _ := sqrt(defectSquared)
+    defectOfTransposed, _ := sqrt(defectSquaredOfTranspose)
 
     rows := make([][]*mat.Dense, degree + 1)
 
