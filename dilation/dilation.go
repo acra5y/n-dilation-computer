@@ -13,7 +13,7 @@ type squareRoot func(*mat.Dense) (*mat.Dense, error)
 
 type newBlockMatrixFromSquares func([][]*mat.Dense) (*mat.Dense, error)
 
-func defectOperator (isPD isPositiveDefinite, sqrt squareRoot, t mat.Matrix) (*mat.Dense, error) {
+func defectOperatorSquared (t mat.Matrix) *mat.Dense {
     n, _ := t.Dims()
     eye := eye.OfDimension(n)
 
@@ -24,6 +24,11 @@ func defectOperator (isPD isPositiveDefinite, sqrt squareRoot, t mat.Matrix) (*m
     defectSquared := mat.NewDense(n, n, nil)
 
     defectSquared.Sub(eye, tTimesTTransposed)
+    return defectSquared
+}
+
+func defectOperator (isPD isPositiveDefinite, sqrt squareRoot, t mat.Matrix) (*mat.Dense, error) {
+    defectSquared := defectOperatorSquared(t)
 
     if pd, _ := isPD(&mat.Eigen{}, defectSquared); !pd {
         return mat.NewDense(0, 0, nil), fmt.Errorf("Input is not a contraction")
