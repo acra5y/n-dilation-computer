@@ -1,6 +1,8 @@
 
 # n-dilation-computer
 
+This project is licensed under the terms of the MIT license.
+
 Simple microservice to compute a unitary N dilation of a given contraction matrix built by a golang beginner. It was built on `go version go1.11.1`
 
 If you stumbled across this and are interested, found an bug or have another idea how to contribute, feel free to open an issue or a pull request.
