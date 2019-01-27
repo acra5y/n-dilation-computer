@@ -1,11 +1,11 @@
 
 # n-dilation-computer
 
+_Simple microservice to compute a unitary N dilation of a given contraction matrix built by a golang beginner. It was built on `go version go1.11.1`_
+
 This project is licensed under the terms of the MIT license.
 
-Simple microservice to compute a unitary N dilation of a given contraction matrix built by a golang beginner. It was built on `go version go1.11.1`
-
-If you stumbled across this and are interested, found an bug or have another idea how to contribute, feel free to open an issue or a pull request.
+If you stumbled across this and are interested, found a bug or have another idea how to contribute, feel free to open an issue or a pull request.
 
 The recipe to calculate the dilation follows the theory mentioned by Béla Szőkefalvi-Nagy in "Analyse harmonique des opérateurs de l'espace de Hilbert" (1967). The matrix square root needed for the dilation is calculated using the Exponential Method for Matrices.
 
