@@ -1,7 +1,7 @@
 
 # n-dilation-computer
 
-_Simple microservice to compute a unitary N dilation of a given contraction matrix built by a golang beginner. It was built on `go version go1.11.1`_
+_Simple microservice to compute a unitary N dilation of a given contraction matrix written by a golang beginner_
 
 This project is licensed under the terms of the MIT license.
 
@@ -12,6 +12,7 @@ The recipe to calculate the dilation follows the theory mentioned by Béla Szők
 ## Usage
 
 Run any common `go` tasks such as `go build`, `go test ./...` or `go run main.go`. The latter will start the server listening on port `:8080`.
+This project was built on `go version go1.11.1`.
 
 ## Endpoints
 
