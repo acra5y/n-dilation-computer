@@ -77,7 +77,9 @@ func TestDilationHandler(t *testing.T) {
     }
 
     for _, table := range tables {
+        table := table
         t.Run(table.desc, func(t *testing.T) {
+            t.Parallel()
             reader := strings.NewReader(table.body)
             req, err := http.NewRequest("POST", "/mock", reader)
             req.Header.Set("Content-Type", "application/json")
