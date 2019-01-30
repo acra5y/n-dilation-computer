@@ -62,21 +62,20 @@ func isIllConditioned(m* mat.Dense, iteration int) bool {
 func Calculate(c *mat.Dense) (sq *mat.Dense, err error) {
     err = nil
     n, _ := c.Dims()
-    var m1, m2, m3, eyeN, inverse, p, z *mat.Dense
+    var m2, m3, eyeN, inverse, p, z *mat.Dense
     eyeN = eye.OfDimension(n)
     sq = mat.NewDense(n, n, nil)
-    m1 = mat.NewDense(n, n, nil)
     m2 = mat.NewDense(n, n, nil)
     m3 = mat.NewDense(n, n, nil)
     p = mat.NewDense(n, n, nil)
-    m1.Clone(eyeN)
+    sq.Clone(eyeN)
     m2.Clone(c)
     z = mat.NewDense(n, n, nil)
     z.Sub(c, eyeN)
 
     for i := 1; i <= 100; i++ {
-        m3 = nextGuess(c, z, m1, m2)
-        m1.Clone(m2)
+        m3 = nextGuess(c, z, sq, m2)
+        sq.Clone(m2)
         m2.Clone(m3)
 
         if (isIllConditioned(m3, i)) {
@@ -84,7 +83,7 @@ func Calculate(c *mat.Dense) (sq *mat.Dense, err error) {
         }
     }
 
-    inverse = inverseViaQR(m1)
+    inverse = inverseViaQR(sq)
     p.Product(m2, inverse)
     sq.Sub(p, eyeN)
 
