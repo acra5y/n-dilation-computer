@@ -20,10 +20,9 @@ import (
 
 func inverseViaQR(m *mat.Dense) (inverse *mat.Dense) {
     n, _ := m.Dims()
-    var q, r, rInv *mat.Dense
+    var q, r *mat.Dense
     r = mat.NewDense(n, n, nil)
     q = mat.NewDense(n, n, nil)
-    rInv = mat.NewDense(n, n, nil)
 
     inverse = mat.NewDense(n, n, nil)
 
@@ -31,21 +30,20 @@ func inverseViaQR(m *mat.Dense) (inverse *mat.Dense) {
     qr.Factorize(m)
     qr.QTo(q)
     qr.RTo(r)
-    rInv.Inverse(r)
+    inverse.Inverse(r)
 
-    inverse.Product(rInv, q.T())
+    inverse.Product(inverse, q.T())
     return
 }
 
 func nextGuess(c, z, prePredecessor, predecessor *mat.Dense) (guess *mat.Dense) {
     n, _ := c.Dims()
-    var doubled, p *mat.Dense
+    var p *mat.Dense
     guess = mat.NewDense(n, n, nil)
-    doubled = mat.NewDense(n, n, nil)
     p = mat.NewDense(n, n, nil)
-    doubled.Scale(2, predecessor)
+    guess.Scale(2, predecessor)
     p.Product(z, prePredecessor)
-    guess.Add(doubled, p)
+    guess.Add(guess, p)
     return
 }
 
@@ -62,12 +60,11 @@ func isIllConditioned(m* mat.Dense, iteration int) bool {
 func Calculate(c *mat.Dense) (sq *mat.Dense, err error) {
     err = nil
     n, _ := c.Dims()
-    var m2, m3, eyeN, inverse, p, z *mat.Dense
+    var m2, m3, eyeN, z *mat.Dense
     eyeN = eye.OfDimension(n)
     sq = mat.NewDense(n, n, nil)
     m2 = mat.NewDense(n, n, nil)
     m3 = mat.NewDense(n, n, nil)
-    p = mat.NewDense(n, n, nil)
     sq.Clone(eyeN)
     m2.Clone(c)
     z = mat.NewDense(n, n, nil)
@@ -83,9 +80,9 @@ func Calculate(c *mat.Dense) (sq *mat.Dense, err error) {
         }
     }
 
-    inverse = inverseViaQR(sq)
-    p.Product(m2, inverse)
-    sq.Sub(p, eyeN)
+    sq = inverseViaQR(sq)
+    sq.Product(m2, sq)
+    sq.Sub(sq, eyeN)
 
     return
 }
