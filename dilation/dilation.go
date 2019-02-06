@@ -17,13 +17,11 @@ func defectOperatorSquared (t mat.Matrix) *mat.Dense {
     n, _ := t.Dims()
     eye := eye.OfDimension(n)
 
-    tTimesTTransposed := mat.NewDense(n, n, nil)
-
-    tTimesTTransposed.Product(t, t.T())
-
     defectSquared := mat.NewDense(n, n, nil)
 
-    defectSquared.Sub(eye, tTimesTTransposed)
+    defectSquared.Product(t, t.T())
+
+    defectSquared.Sub(eye, defectSquared)
     return defectSquared
 }
 
