@@ -23,7 +23,7 @@ func testUnitaryNDilation(test *testing.T, expectedT *mat.Dense, expectedN int, 
     }
 }
 
-func TestDilationHandler(t *testing.T) {
+func TestDilationHandlerPost(t *testing.T) {
     tables := []struct {
         desc string
         body string
@@ -99,5 +99,34 @@ func TestDilationHandler(t *testing.T) {
                 t.Errorf("handler returned unexpected body: got %v want %v", r, table.expectedBody)
             }
         })
+    }
+}
+
+
+func TestDilationHandlerOptions(t *testing.T) {
+    req, err := http.NewRequest("OPTIONS", "/mock", nil)
+    req.Header.Set("Content-Type", "application/json")
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    rr := httptest.NewRecorder()
+    handler := http.HandlerFunc(DilationHandler(func(t *mat.Dense, n int) (*mat.Dense, error) { return mat.NewDense(0, 0, nil), nil }))
+    handler.ServeHTTP(rr, req)
+    expectedStatus := http.StatusOK
+
+    if status := rr.Code; status != expectedStatus {
+        t.Errorf("handler returned wrong status code: got %v want %v", status, expectedStatus)
+    }
+
+    headers := rr.Header()
+    expectedHeaders := make(map[string]string)
+    expectedHeaders["Access-Control-Allow-Methods"] = "POST,OPTIONS"
+    expectedHeaders["Content-Type"] = "application/json"
+
+    for header, expectedValue := range expectedHeaders {
+        if res := headers.Get(header); res != expectedValue {
+            t.Errorf("handler returned wrong %s header: got %v want %v", header, res, expectedValue)
+        }
     }
 }

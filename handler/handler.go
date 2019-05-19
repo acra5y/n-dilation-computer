@@ -83,11 +83,19 @@ func handleDilationPost(dilation unitaryNDilation, w http.ResponseWriter, r *htt
     json.NewEncoder(w).Encode(responseBody{ Value: denseToSlice(unitary) })
 }
 
+func handleDilationOptions(w http.ResponseWriter) {
+    w.Header().Add("Access-Control-Allow-Methods", "POST,OPTIONS")
+    w.Header().Add("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+}
+
 func DilationHandler(dilation unitaryNDilation) func(http.ResponseWriter, *http.Request) {
     return func(w http.ResponseWriter, r *http.Request) {
         switch r.Method {
             case http.MethodPost:
                 handleDilationPost(dilation, w, r)
+            case http.MethodOptions:
+                handleDilationOptions(w)
             default:
                 http.Error(w, "405 method not allowed", http.StatusMethodNotAllowed)
             }
