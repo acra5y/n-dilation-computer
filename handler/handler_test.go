@@ -92,7 +92,7 @@ func TestDilationHandler(t *testing.T) {
             handler.ServeHTTP(rr, req)
 
             if status := rr.Code; status != table.expectedStatus {
-                t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+                t.Errorf("handler returned wrong status code: got %v want %v", status, table.expectedStatus)
             }
 
             if r := rr.Body.String(); r != table.expectedBody {
