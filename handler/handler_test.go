@@ -121,8 +121,10 @@ func TestDilationHandlerOptions(t *testing.T) {
 
     headers := rr.Header()
     expectedHeaders := make(map[string]string)
+    expectedHeaders["Access-Control-Allow-Headers"] = "Content-Type, Origin"
     expectedHeaders["Access-Control-Allow-Methods"] = "POST,OPTIONS"
-    expectedHeaders["Content-Type"] = "application/json"
+    expectedHeaders["Content-Type"] = "text/plain"
+    expectedHeaders["Access-Control-Allow-Origin"] = "http://localhost:3000"
 
     for header, expectedValue := range expectedHeaders {
         if res := headers.Get(header); res != expectedValue {
