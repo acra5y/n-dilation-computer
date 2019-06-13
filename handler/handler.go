@@ -84,8 +84,10 @@ func handleDilationPost(dilation unitaryNDilation, w http.ResponseWriter, r *htt
 }
 
 func handleDilationOptions(w http.ResponseWriter) {
+    w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Origin")
     w.Header().Add("Access-Control-Allow-Methods", "POST,OPTIONS")
-    w.Header().Add("Content-Type", "application/json")
+    w.Header().Add("Content-Type", "text/plain")
+    w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3000")
     w.WriteHeader(http.StatusOK)
 }
 
