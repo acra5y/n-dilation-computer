@@ -54,6 +54,7 @@ func denseToSlice(u *mat.Dense) (data []float64) {
 
 func handleDilationPost(dilation unitaryNDilation, w http.ResponseWriter, r *http.Request) {
     w.Header().Add("Content-Type", "application/json")
+    w.Header().Add("Access-Control-Allow-Origin", "http://localhost:3000")
     decoder := json.NewDecoder(r.Body)
     var b requestBody
     err := decoder.Decode(&b)

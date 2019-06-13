@@ -23,6 +23,14 @@ func testUnitaryNDilation(test *testing.T, expectedT *mat.Dense, expectedN int, 
     }
 }
 
+func testHeaders(test *testing.T, realHeaders http.Header, expectedHeaders map[string]string) {
+    for header, expectedValue := range expectedHeaders {
+        if res := realHeaders.Get(header); res != expectedValue {
+            test.Errorf("handler returned wrong %s header: got %v want %v", header, res, expectedValue)
+        }
+    }
+}
+
 func TestDilationHandlerPost(t *testing.T) {
     tables := []struct {
         desc string
@@ -95,6 +103,12 @@ func TestDilationHandlerPost(t *testing.T) {
                 t.Errorf("handler returned wrong status code: got %v want %v", status, table.expectedStatus)
             }
 
+            expectedHeaders := make(map[string]string)
+            expectedHeaders["Content-Type"] = "application/json"
+            expectedHeaders["Access-Control-Allow-Origin"] = "http://localhost:3000"
+
+            testHeaders(t, rr.Header(), expectedHeaders)
+
             if r := rr.Body.String(); r != table.expectedBody {
                 t.Errorf("handler returned unexpected body: got %v want %v", r, table.expectedBody)
             }
@@ -119,16 +133,11 @@ func TestDilationHandlerOptions(t *testing.T) {
         t.Errorf("handler returned wrong status code: got %v want %v", status, expectedStatus)
     }
 
-    headers := rr.Header()
     expectedHeaders := make(map[string]string)
     expectedHeaders["Access-Control-Allow-Headers"] = "Content-Type, Origin"
     expectedHeaders["Access-Control-Allow-Methods"] = "POST,OPTIONS"
     expectedHeaders["Content-Type"] = "text/plain"
     expectedHeaders["Access-Control-Allow-Origin"] = "http://localhost:3000"
 
-    for header, expectedValue := range expectedHeaders {
-        if res := headers.Get(header); res != expectedValue {
-            t.Errorf("handler returned wrong %s header: got %v want %v", header, res, expectedValue)
-        }
-    }
+    testHeaders(t, rr.Header(), expectedHeaders)
 }
