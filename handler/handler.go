@@ -53,6 +53,7 @@ func denseToSlice(u *mat.Dense) (data []float64) {
 }
 
 func handleDilationPost(dilation unitaryNDilation, w http.ResponseWriter, r *http.Request) {
+    w.Header().Add("Content-Type", "application/json")
     decoder := json.NewDecoder(r.Body)
     var b requestBody
     err := decoder.Decode(&b)
@@ -79,7 +80,6 @@ func handleDilationPost(dilation unitaryNDilation, w http.ResponseWriter, r *htt
         return
     }
 
-    w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(responseBody{ Value: denseToSlice(unitary) })
 }
 
