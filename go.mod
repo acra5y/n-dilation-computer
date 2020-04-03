@@ -1,3 +1,8 @@
 module github.com/acra5y/n-dilation-computer
 
-require gonum.org/v1/gonum v0.0.0-20181027095710-acd85591b916
+require (
+	github.com/acra5y/go-dilation v1.0.0
+	gonum.org/v1/gonum v0.7.0
+)
+
+go 1.13
