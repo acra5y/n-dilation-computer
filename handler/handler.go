@@ -25,7 +25,7 @@ type unitaryNDilation func(*mat.Dense, int) (*mat.Dense, error)
 func validateRequestBody(b requestBody) url.Values {
     errs := url.Values{}
 
-    if b.Degree == 0 {
+    if b.Degree <= 0 {
         errs.Add("degree", "degree must be an integer greater than zero")
     }
 
